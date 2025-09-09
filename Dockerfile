@@ -1,12 +1,8 @@
-FROM golang:1.25 as builder
+FROM golang:1.25 AS builder
+WORKDIR /app
+COPY ./main.go .
+RUN go build -o builder/main ./main.go
 
-WORKDIR /usr/src/app
-
-COPY . .
-
-RUN go build ./main.go
-
-
-FROM alpine:latest
-COPY --from=builder /usr/src/app/main .
-ENTRYPOINT [ "./main" ]
+FROM scratch
+COPY --from=builder /app/builder/main .
+ENTRYPOINT ["./main" ]
